@@ -36,22 +36,22 @@ in einen Puffer (Overlaybereich) nachgezogen werden.
 
 Weitere Hinweise zu QUICKDUMP
 
-Schreiben eines Bandes mit 1-Byte-ID:
-Startadresse    SAL/SAH nach 17F5/F6
-Endadresse+1    EAL/EAH nach 17F7/F8
-Identität       ID    nach 17F9
-Start           STARTADRESSE in $0600
+Schreiben eines Bandes mit 1-Byte-ID:<br>
+Startadresse    SAL/SAH nach 17F5/F6<br>
+Endadresse+1    EAL/EAH nach 17F7/F8<br>
+Identität       ID    nach 17F9<br>
+Start           STARTADRESSE in $0600<br>
 
-Schreiben eines Bandes mit 6-Byte-Namen (Standard header): 
-Startadresse und Endadresse wie vor
-Identität      Header nach 1780-1785 oder bei Veränderung der Adresse in LOSWI woanders.
-Start          STARTADRESSE in $0605
+Schreiben eines Bandes mit 6-Byte-Namen (Standard header): <br>
+Startadresse und Endadresse wie vor<br>
+Identität      Header nach 1780-1785 oder bei Veränderung der Adresse in LOSWI woanders.<br>
+Start          STARTADRESSE in $0605<br>
 
-Schreiben eines Bandes zusätzlich mit 'externen Parametern': 
-Startadresse, Endadresse und standard header wie vor.
-LDA wirkliche Länge der in 1780 ... gespeicherten Tabelle. 
-LDX #$ 00
-JSR ENTRY1
+Schreiben eines Bandes zusätzlich mit 'externen Parametern': <br>
+Startadresse, Endadresse und standard header wie vor.<br>
+LDA wirkliche Länge der in 1780 ... gespeicherten Tabelle. <br>
+LDX #$ 00<br>
+JSR ENTRY1<br>
 
 # VERSALOAD
 

@@ -70,10 +70,9 @@ Monitor-Anzeige, die LFLAG wird aber auf 'FE' gesetzt.
 Die Zahl der Dienstleistungen wird eigentlich fast verdreifacht, weil
 die Identitätsangabe für die zu lesenden Bandsätze verschieden sein darf:
 
-  a) Identität 1 Byte, Vergleich mit Zelle 17F9,
-  b) Standard-Name 6 Bytes, Vergleich mit Tabelle in 1780-85,
-  c) Standard-Name wie in b), zusätzlich externe Parameter, die beim 
-    Lesen in den Zellen 1786 ff. abgelegt werden.
+  a) Identität 1 Byte, Vergleich mit Zelle 17F9,<br>
+  b) Standard-Name 6 Bytes, Vergleich mit Tabelle in 1780-85,<br>
+  c) Standard-Name wie in b), zusätzlich externe Parameter, die beim Lesen in den Zellen 1786 ff. abgelegt werden.
 
 Die Dienstleistungen im einzelnen:
 LADOE, LOAD Open End. Ein Programm wird an seinem alten Speicherplatz geladen, es darf beliebig lang sein, weil ein Puffer nicht zu 

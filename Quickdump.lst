@@ -1,0 +1,188 @@
+ca65 V2.19 - Git 4f87c7c
+Main file   : .\Quickdump.S
+Current file: .\Quickdump.S
+
+000000r 1               
+000000r 1               ;*****************************
+000000r 1               ;* Quickdump                 *
+000000r 1               ;* 1978                      *
+000000r 1               ;* (c) John Oliver           *
+000000r 1               ;* UoFl                      *
+000000r 1               ;*****************************
+000000r 1               
+000000r 1               GANG     =       $cc
+000000r 1               TIC      =       $cd
+000000r 1               COUNT    =       $ce
+000000r 1               TRIB     =       $cf
+000000r 1               NPUL     =       $d0
+000000r 1               TIMG     =       $d1
+000000r 1               SWI1     =       $d4
+000000r 1               SWI2     =       $d5
+000000r 1               OSAL     =       $d6
+000000r 1               OSAH     =       $d7
+000000r 1               SBD      =       $1743
+000000r 1               CLK1T    =       $1744
+000000r 1               CLKRD1   =       $1747
+000000r 1               CHKL     =       $17e7
+000000r 1               CHKH     =       $17e8
+000000r 1               VEB      =       $17ec
+000000r 1               SAL      =       $17f5
+000000r 1               SAH      =       $17f6
+000000r 1               EAL      =       $17f7
+000000r 1               ID       =       $17f9
+000000r 1               INTVEB   =       $1932
+000000r 1               CHKT     =       $194c
+000000r 1               INCVEB   =       $19ea
+000000r 1               KIM      =       $1c4f
+000000r 1               
+000000r 1                        .org    $0600
+000600  1  A9 00        StartA:  lda     #$00
+000602  1  AA                    tax
+000603  1  F0 04                 beq     Gosub
+000605  1  A9 05        StartB:  lda     #$05
+000607  1  A2 00                 ldx     #$00
+000609  1  20 0F 06     Gosub:   jsr     Entry1
+00060C  1  4C 4F 1C              jmp     KIM
+00060F  1               
+00060F  1  85 D4        Entry1:  sta     SWI1
+000611  1  86 D5                 stx     SWI2
+000613  1  A2 04                 ldx     #$04
+000615  1  BD 29 07     StoTab:  lda     Tab,x
+000618  1  95 CF                 sta     TRIB,x
+00061A  1  CA                    dex
+00061B  1  D0 F8                 bne     StoTab
+00061D  1  A9 AD        SuperD:  lda     #$ad
+00061F  1  8D EC 17              sta     VEB
+000622  1  20 32 19              jsr     INTVEB
+000625  1  A9 27                 lda     #$27
+000627  1  85 CC                 sta     GANG
+000629  1  A9 BF                 lda     #$bf
+00062B  1  8D 43 17              sta     SBD
+00062E  1  A9 20                 lda     #$20
+000630  1  85 CD                 sta     TIC
+000632  1  A9 16                 lda     #$16
+000634  1  48           Hic1:    pha
+000635  1  20 F2 06              jsr     OutCHT
+000638  1  68                    pla
+000639  1  C6 CD                 dec     TIC
+00063B  1  D0 F7                 bne     Hic1
+00063D  1  A9 2A                 lda     #$2a
+00063F  1  20 F2 06              jsr     OutCHT
+000642  1  A9 00                 lda     #$00
+000644  1  20 D0 06              jsr     OutBT
+000647  1  A5 D5                 lda     SWI2
+000649  1  D0 0F                 bne     Dup1
+00064B  1  AD F5 17              lda     SAL
+00064E  1  20 D0 06              jsr     OutBT
+000651  1  AD F6 17              lda     SAH
+000654  1  20 D0 06              jsr     OutBT
+000657  1  4C 64 06              jmp     SendID
+00065A  1               
+00065A  1  A5 D6        Dup1:    lda     OSAL
+00065C  1  20 D0 06              jsr     OutBT
+00065F  1  A5 D7                 lda     OSAH
+000661  1  20 D0 06              jsr     OutBT
+000664  1  A5 D4        SendID:  lda     SWI1
+000666  1  20 D0 06              jsr     OutBT
+000669  1  A5 D4                 lda     SWI1
+00066B  1  D0 09                 bne     SendTB
+00066D  1  AD F9 17              lda     ID
+000670  1  20 F2 06              jsr     OutCHT
+000673  1  4C 8A 06              jmp     NumbOb
+000676  1               
+000676  1  A9 00        SendTB:  lda     #$00
+000678  1  85 D5                 sta     SWI2
+00067A  1  A6 D5        LoSwi:   ldx     SWI2
+00067C  1  BD 80 17              lda     $1780,x
+00067F  1  20 F2 06              jsr     OutCHT
+000682  1  E6 D5                 inc     SWI2
+000684  1  A5 D4                 lda     SWI1
+000686  1  C5 D5                 cmp     SWI2
+000688  1  B0 F0                 bcs     LoSwi
+00068A  1  38           NumbOb:  sec
+00068B  1  AD F7 17              lda     EAL
+00068E  1  ED F5 17              sbc     SAL
+000691  1  08                    php
+000692  1  20 F2 06              jsr     OutCHT
+000695  1  28                    plp
+000696  1  AD F8 17              lda     ID-1
+000699  1  ED F6 17              sbc     SAH
+00069C  1  20 F2 06              jsr     OutCHT
+00069F  1  20 43 19              jsr     $1943
+0006A2  1  20 EC 17     SupDP1:  jsr     VEB
+0006A5  1  20 EF 06              jsr     OutCHC
+0006A8  1  20 EA 19              jsr     INCVEB
+0006AB  1  AD ED 17              lda     VEB+1
+0006AE  1  CD F7 17              cmp     EAL
+0006B1  1  AD EE 17              lda     VEB+2
+0006B4  1  ED F8 17              sbc     ID-1
+0006B7  1  90 E9                 bcc     SupDP1
+0006B9  1  A9 2F                 lda     #$2f
+0006BB  1  20 F2 06              jsr     OutCHT
+0006BE  1  AD E7 17              lda     CHKL
+0006C1  1  20 D0 06              jsr     OutBT
+0006C4  1  AD E8 17              lda     CHKH
+0006C7  1  20 D0 06              jsr     OutBT
+0006CA  1  A9 04                 lda     #$04
+0006CC  1  20 F2 06              jsr     OutCHT
+0006CF  1  60                    rts
+0006D0  1               
+0006D0  1  48           OutBT:   pha
+0006D1  1  4A                    lsr     A
+0006D2  1  4A                    lsr     A
+0006D3  1  4A                    lsr     A
+0006D4  1  4A                    lsr     A
+0006D5  1  20 E3 06              jsr     HexTA
+0006D8  1  20 F2 06              jsr     OutCHT
+0006DB  1  68                    pla
+0006DC  1  20 E3 06              jsr     HexTA
+0006DF  1  20 F2 06              jsr     OutCHT
+0006E2  1  60                    rts
+0006E3  1               
+0006E3  1  29 0F        HexTA:   and     #$0f
+0006E5  1  C9 0A                 cmp     #$0a
+0006E7  1  18                    clc
+0006E8  1  30 02                 bmi     HexTA1
+0006EA  1  69 07                 adc     #$07
+0006EC  1  69 30        HexTA1:  adc     #$30
+0006EE  1  60                    rts
+0006EF  1               
+0006EF  1  20 4C 19     OutCHC:  jsr     CHKT
+0006F2  1  A0 08        OutCHT:  ldy     #$08
+0006F4  1  84 CE                 sty     COUNT
+0006F6  1  A0 02        Try:     ldy     #$02
+0006F8  1  84 CF                 sty     TRIB
+0006FA  1  B6 D0        Zon:     ldx     NPUL,y
+0006FC  1  48                    pha
+0006FD  1  78           Zon1:    sei
+0006FE  1  2C 47 17     Zon2:    bit     CLKRD1
+000701  1  10 FB                 bpl     Zon2
+000703  1  B9 D1 00              lda     TIMG,y
+000706  1  8D 44 17              sta     CLK1T
+000709  1  A5 CC                 lda     GANG
+00070B  1  49 80                 eor     #$80
+00070D  1  8D 42 17              sta     SBD-1
+000710  1  58                    cli
+000711  1  85 CC                 sta     GANG
+000713  1  CA                    dex
+000714  1  D0 E7                 bne     Zon1
+000716  1  68                    pla
+000717  1  C6 CF                 dec     TRIB
+000719  1  F0 05                 beq     SetZ
+00071B  1  30 07                 bmi     ROut
+00071D  1  4A                    lsr     A
+00071E  1  90 DA                 bcc     Zon
+000720  1  A0 00        SetZ:    ldy     #$00
+000722  1  F0 D6                 beq     Zon
+000724  1               
+000724  1  C6 CE        ROut:    dec     COUNT
+000726  1  D0 CE                 bne     Try
+000728  1  60                    rts
+000729  1               
+000729  1  17           Tab:     .byte   $17
+00072A  1  02                    .byte   $02
+00072B  1  C3                    .byte   $c3
+00072C  1  03                    .byte   $03
+00072D  1  7E                    .byte   $7e
+00072E  1  EA           End:     nop
+00072E  1               

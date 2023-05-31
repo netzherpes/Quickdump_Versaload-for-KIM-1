@@ -1,0 +1,236 @@
+ca65 V2.19 - Git 4f87c7c
+Main file   : .\Versaload.S
+Current file: .\Versaload.S
+
+000000r 1               
+000000r 1               ;*****************************
+000000r 1               ;* VERSALOAD                 *
+000000r 1               ;* part2                     *
+000000r 1               ;*****************************
+000000r 1               
+000000r 1               EALB     =       $c9
+000000r 1               EALH     =       $ca
+000000r 1               LFLG     =       $cb
+000000r 1               SWI1     =       $d4
+000000r 1               SWI2     =       $d5
+000000r 1               OSAL     =       $d6
+000000r 1               OSAH     =       $d7
+000000r 1               CNTRL    =       $d8
+000000r 1               IDTEMP   =       $d9
+000000r 1               EOPL     =       $e2
+000000r 1               EOPH     =       $e3
+000000r 1               INH      =       $f9
+000000r 1               POINTL   =       $fa
+000000r 1               POINTH   =       $fb
+000000r 1               RALOAD   =       $0227
+000000r 1               smlRAM   =       $1780
+000000r 1               CHKL     =       $17e7
+000000r 1               CHKH     =       $17e8
+000000r 1               SavX1    =       $17ea
+000000r 1               VEB1     =       $17ed
+000000r 1               VEB2     =       $17ee
+000000r 1               SAL      =       $17f5
+000000r 1               SAH      =       $17f6
+000000r 1               EAL      =       $17f7
+000000r 1               EAH      =       $17f8
+000000r 1               ID       =       $17f9
+000000r 1               LOADT    =       $188c
+000000r 1               LOADT9   =       $1929
+000000r 1               INTVEB   =       $1932
+000000r 1               INITVEB12 =      $193e
+000000r 1               CHKT     =       $194c
+000000r 1               INCVEB   =       $19ea
+000000r 1               RDBYT    =       $19f3
+000000r 1               RDCHT    =       $1a24
+000000r 1               SCANDS   =       $1f1f
+000000r 1               
+000000r 1                        .org    $0800
+000800  1  A9 22        Dupe:    lda     #$22
+000802  1  D0 1F                 bne     Gosub
+000804  1  A9 01        Dictry:  lda 	 #$01
+000806  1  D0 0E        		 bne	 Gostr
+000808  1  A9 C0        LinkOE:  lda	 #$c0
+00080A  1  D0 0A        		 bne	 Gostr
+00080C  1  A9 E0        LinkBU:  lda	 #$e0
+00080E  1  D0 06        		 bne	 Gostr
+000810  1  A9 40        Reloe:	 lda	 #$40
+000812  1  D0 02        		 bne	 Gostr
+000814  1  A9 62        RelBuf:	 lda	 #$62
+000816  1  4C 29 08     Gostr: 	 jmp	 Entry
+000819  1  A9 00        LoadOE:	 lda	 #$00
+00081B  1  F0 06        		 beq	 Gosub
+00081D  1  A9 28        LoadBU:  lda	 #$28
+00081F  1  D0 02        		 bne	 Gosub
+000821  1  A9 24        DataLB:  lda	 #$24
+000823  1  20 29 08     Gosub:   jsr     Entry
+000826  1  4C 4F 1C              jmp     $1c4f
+000829  1               
+000829  1  0A           Entry:   asl     A
+00082A  1  85 D8                 sta     CNTRL
+00082C  1  90 0C                 bcc     NoLink
+00082E  1  AD ED 17              lda     VEB1
+000831  1  8D F5 17              sta     SAL
+000834  1  AD EE 17              lda     VEB2
+000837  1  8D F6 17              sta     SAH
+00083A  1  24 D8        NoLink:  bit     CNTRL
+00083C  1  50 0A                 bvc     XID
+00083E  1  AD F7 17              lda     EAL
+000841  1  85 C9                 sta     EALB
+000843  1  AD F8 17              lda     EAH
+000846  1  85 CA                 sta     EALH
+000848  1  AD F9 17     XID:     lda     ID
+00084B  1  85 D9                 sta     IDTEMP
+00084D  1  A9 00        SuperL:  lda     #$00
+00084F  1  8D F9 17              sta     ID
+000852  1  85 CB                 sta     LFLG
+000854  1  85 D5                 sta     SWI2
+000856  1  A9 60        LoadOn:  lda     #$60
+000858  1  8D EC 17              sta     VEB1-1
+00085B  1  20 8C 18              jsr     LOADT
+00085E  1  85 D4                 sta     SWI1
+000860  1  20 24 1A     NextCH:  jsr     RDCHT
+000863  1  AD EA 17              lda     SavX1
+000866  1  A6 D8                 ldx     CNTRL
+000868  1  E0 02                 cpx     #$02
+00086A  1  D0 03                 bne     next2
+00086C  1  4C 7E 09              jmp     ShowD1
+00086F  1               
+00086F  1  A6 D4        next2:   ldx     SWI1
+000871  1  D0 0E                 bne     CompTB
+000873  1  C5 D9                 cmp     IDTEMP
+000875  1  D0 04                 bne     next3
+000877  1  85 D9                 sta     IDTEMP
+000879  1  F0 2B                 beq     NumbYT
+00087B  1               
+00087B  1  E4 D9        next3:   cpx     IDTEMP
+00087D  1  F0 27                 beq     NumbYT
+00087F  1  D0 CC                 bne     SuperL
+000881  1               
+000881  1  A6 D5        CompTB:  ldx     SWI2
+000883  1  DD 80 17              cmp     smlRAM,x
+000886  1  D0 CE                 bne     LoadOn
+000888  1  E6 D5                 inc     SWI2
+00088A  1  A9 05                 lda     #$05
+00088C  1  C5 D5                 cmp     SWI2
+00088E  1  B0 D0                 bcs     NextCH
+000890  1  A5 D4        EOHead:  lda     SWI1
+000892  1  C5 D5                 cmp     SWI2
+000894  1  90 10                 bcc     NumbYT
+000896  1  20 24 1A              jsr     RDCHT
+000899  1  AD EA 17              lda     SavX1
+00089C  1  A6 D5                 ldx     SWI2
+00089E  1  9D 80 17              sta     smlRAM,x
+0008A1  1  E6 D5                 inc     SWI2
+0008A3  1  4C 90 08              jmp     EOHead
+0008A6  1               
+0008A6  1  AD ED 17     NumbYT:  lda     VEB1
+0008A9  1  85 D6                 sta     OSAL
+0008AB  1  AD EE 17              lda     VEB2
+0008AE  1  85 D7                 sta     OSAH
+0008B0  1  A9 8D                 lda     #$8d
+0008B2  1  8D EC 17              sta     VEB1-1
+0008B5  1  20 24 1A              jsr     RDCHT
+0008B8  1  A5 D8                 lda     CNTRL
+0008BA  1  F0 04                 beq     initVEB
+0008BC  1  C9 10                 cmp     #$10
+0008BE  1  D0 06                 bne     XChng
+0008C0  1  20 3E 19     initVEB: jsr     INITVEB12
+0008C3  1  4C C9 08              jmp     Compu
+0008C6  1               
+0008C6  1  20 32 19     XChng:   jsr     INTVEB
+0008C9  1  18           Compu:   clc
+0008CA  1  AD EA 17              lda     SavX1
+0008CD  1  6D ED 17              adc     VEB1
+0008D0  1  85 E2                 sta     EOPL
+0008D2  1  08                    php
+0008D3  1  20 24 1A              jsr     RDCHT
+0008D6  1  28                    plp
+0008D7  1  AD EA 17              lda     SavX1
+0008DA  1  6D EE 17              adc     VEB2
+0008DD  1  85 E3                 sta     EOPH
+0008DF  1  20 24 1A     Patch1:  jsr     RDCHT
+0008E2  1  AD EA 17              lda     SavX1
+0008E5  1  20 4C 19              jsr     CHKT
+0008E8  1  20 EC 17              jsr     VEB1-1
+0008EB  1  20 EA 19              jsr     INCVEB
+0008EE  1  AD ED 17              lda     VEB1
+0008F1  1  24 D8                 bit     CNTRL
+0008F3  1  50 06                 bvc     Patch3
+0008F5  1  C5 C9                 cmp     EALB
+0008F7  1  D0 02                 bne     Patch3
+0008F9  1  F0 04                 beq     Patch4
+0008FB  1               
+0008FB  1  C5 E2        Patch3:  cmp     EOPL
+0008FD  1  D0 E0                 bne     Patch1
+0008FF  1  AD EE 17     Patch4:  lda     VEB2
+000902  1  24 D8                 bit     CNTRL
+000904  1  50 11                 bvc     Patch5
+000906  1  C5 CA                 cmp     EALH
+000908  1  D0 0D                 bne     Patch5
+00090A  1  C5 E3                 cmp     EOPH
+00090C  1  D0 64                 bne     Error2
+00090E  1  AD ED 17              lda     VEB1
+000911  1  C5 E2                 cmp     EOPL
+000913  1  D0 5D                 bne     Error2
+000915  1  F0 04                 beq     Patch6
+000917  1               
+000917  1  C5 E3        Patch5:  cmp     EOPH
+000919  1  D0 C4                 bne     Patch1
+00091B  1  20 24 1A     Patch6:  jsr     RDCHT
+00091E  1  C9 2F                 cmp     #$2f
+000920  1  D0 4E                 bne     Error
+000922  1  20 F3 19              jsr     RDBYT
+000925  1  CD E7 17              cmp     CHKL
+000928  1  D0 46                 bne     Error
+00092A  1  20 F3 19              jsr     RDBYT
+00092D  1  CD E8 17              cmp     CHKH
+000930  1  D0 3E                 bne     Error
+000932  1  A5 D8                 lda     CNTRL
+000934  1  10 0D                 bpl     BufA
+000936  1  A5 D6                 lda     OSAL
+000938  1  8D F7 17              sta     EAL
+00093B  1  A5 D7                 lda     OSAH
+00093D  1  8D F8 17              sta     EAH
+000940  1  4C 27 02              jmp     RALOAD
+000943  1               
+000943  1  29 0C        BufA:    and     #$0c
+000945  1  F0 36                 beq     Exit
+000947  1  AD ED 17              lda     VEB1
+00094A  1  8D F7 17              sta     EAL
+00094D  1  AD EE 17              lda     VEB2
+000950  1  8D F8 17              sta     EAH
+000953  1  A5 D8                 lda     CNTRL
+000955  1  C9 48                 cmp     #$48
+000957  1  F0 24                 beq     Exit
+000959  1  A5 D9                 lda     IDTEMP
+00095B  1  8D F9 17              sta     ID
+00095E  1  A9 DD                 lda     #$dd
+000960  1  85 F9                 sta     INH
+000962  1  85 FA                 sta     POINTL
+000964  1  85 FB                 sta     POINTH
+000966  1  20 1F 1F     Show1:   jsr     SCANDS
+000969  1  F0 FB                 beq     Show1
+00096B  1  A2 01                 ldx     #$01
+00096D  1  4C 11 06              jmp     $0611
+000970  1               
+000970  1  C6 CB        Error:   dec     LFLG
+000972  1  C6 CB        Error2:  dec     LFLG
+000974  1  24 D8                 bit     CNTRL
+000976  1  30 02                 bmi     @L097A
+000978  1  68                    pla
+000979  1  68                    pla
+00097A  1  4C 29 19     @L097A:  jmp     LOADT9
+00097D  1               
+00097D  1  60           Exit:    rts
+00097E  1               
+00097E  1  85 F9        ShowD1:  sta     INH
+000980  1  AD ED 17              lda     VEB1
+000983  1  85 FA                 sta     POINTL
+000985  1  AD EE 17              lda     VEB2
+000988  1  85 FB                 sta     POINTH
+00098A  1  20 1F 1F     Show2:   jsr     SCANDS
+00098D  1  F0 FB                 beq     Show2
+00098F  1  4C 4D 08              jmp     SuperL
+000992  1               
+000992  1  EA           End:     nop
+000992  1               

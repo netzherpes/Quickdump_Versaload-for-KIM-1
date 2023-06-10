@@ -63,6 +63,16 @@ __DUPE__ is similar to Jim Butterfields SUPER DUPE. It allows to copy a program 
 
 __DICTRY__ loads nothing, but only shows the old starting address and the ID (or the first Byte from the 6 byte name). A keypress shows the next entry.
 
+_remark by webdoc: here you find the jump adresses_<br>
+000800       Dupe:  <br>
+000804       Dictry:<br>
+000808       LinkOE: <br>
+00080C       LinkBU: <br>
+000810       Reloe:<br>
+000814       RelBuf:	<br>
+000819       LoadOE:	<br>
+00081D       LoadBU:  <br>
+000821       DataLB: <br>
 
 _in german_
 

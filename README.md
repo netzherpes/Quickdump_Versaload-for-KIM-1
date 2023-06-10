@@ -20,7 +20,7 @@ least the option to introduce 'external parameters' aside from header.
 QUICKDUMP and VERSALOAD are a dependent pair, they are not compatible 
 with other recording formats.
 
-_in German_
+_in German_<br>
 Jim Butterfield's HYPERTAPE beschleunigt das Bandschreiben und -laden 
 um den Faktor 6. Sehr nützlich ist auch sein SUPER DUPE (Kopieren von 
 Bandcassetten) und sein DIRECTORY (Lesen von Startadresse und ID vom

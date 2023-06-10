@@ -1,3 +1,5 @@
+__Translation by webdoc:__
+
 Around the center of the utilities Superdump and Superload the editor (Rohland Löhr) build a progressive framework:<br>
 VERSALOAD is not only a loading routine, but also a Copy program, a directorry program, a header search, and a linking / relocating program. 
 The last property is the most handy one. 
@@ -27,11 +29,42 @@ Writing to tape with additional parameters: <br>
 Startadress, Endadress und header like before.<br>
 LDA of the length of the table stored in 1780. <br>
 LDX #$ 00<br>
-JSR ENTRY1<br>
+JSR ENTRY1<br> (remark by Nils: should be $060F)
+
+# Versaload
+As described before, VERSALOAD offers 6 different services depending of the entry point.
+
+Those six Servicex are being supplemented by a Buffer possibility.: SAL/SAH in 17F5/F6 set the starting adress, 17F7/F8 the Buffer+1 (first Adress to save).
+If the loading process is being stopped because THe end of the buffer is touched,  Errorcode 'FFF1CL' is shown on the Display. Additionally the LFLAG is set to 'FF'.
+If there is a normal reading error, you also see 'FFF1CL', bur the LFLAG is 'FE'.
+
+As before you can set three Names for the program to laod:
+
+  a) Identity 1 Byte, compare with address 17F9<br>
+  b) 6 Byte Name, compare to area 1780-85,<br>
+  c) additional parameter, like b), with the additional Parameters in area 1786 following.
+
+The 6 services in detail:
+__LADOE__, LOAD Open End. A program will be loaded to its original memory area. It can be as long as you want, a buffer is not set.
+
+__LOADBU__, LOAD only up to end of BUffer. Saving to the original memory area, but with the protection set in 17F7/F8.
+
+__DATALB__, DATA Load to Buffer. Beginning of the load area and maximum memory are set in 17F5-F8.
+
+__RELOE__, RELocate Open End. Recalculates a program while loading from the setted memory area to a new memory area, the Program RALOAd from issue 1 of Mikromag needs to be loaded first. The end of the buffer (protection) is not being considered.
+
+__RELBUF__, RELocate with BUffer. Like b4, but the Endadress in 17F7/F8 will not be exceeded. 
+
+__LINKOE__, LINK Open End. realizes relocation to the in VEB-1 setted area and recalculate to a new adress area with RALOAD (It's a linker !!!)
+
+__LINKBU__, LINK with BUffer. like LINKOE / RELBUF 
+
+__DUPE__ is similar to Jim Butterfields SUPER DUPE. It allows to copy a program from one tape to the other. You need to set a buffer in 17F5-F8. The program to copy has to be named either with the 1 Byte identity oth the 6 byte name. A keypress after the loading starts the dump.
+
+__DICTRY__ loads nothing, but only shows the old starting address and the ID (or the first Byte from the 6 byte name). A keypress shows the next entry.
 
 
-
-
+_in german_
 
 Um das Herzstück der utilities SUPERDUMP und SUPERLOAD baute der 
 Herausgeber einen Rahmen, der sicher fortschrittlich ist:

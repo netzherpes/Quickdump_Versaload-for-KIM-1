@@ -1,3 +1,38 @@
+Around the center of the utilities Superdump and Superload the editor (Rohland Löhr) build a progressive framework:<br>
+VERSALOAD is not only a loading routine, but also a Copy program, a directorry program, a header search, and a linking / relocating program. 
+The last property is the most handy one. 
+VERSALOAD uses the service from issue 1 of Mikromag called RELOAD. Program segments will be loaded from the next free Memoryarea and translated to a new adress area. (please take a look at issue 1)<br>
+Another nice feature is the possible restricted input buffer, A memory area can be protected against unwanted overwriting with setting so in 17F8 /F9. 
+
+Programs can be loaded with the standard 1 Byte ID  od a a 6 byte label. Versaload recognizes the pattern of identification and is looking for identities. It also recognizes, if there are othe Options for writing external parameters or reserved memory (up to 256 bytes). 
+
+Quickdump and Versaload are written as subroutines. Just jsr entry with the Parameters in A and X. 
+This pair of programsis inkompatible with other saving and loading routines. It will give you a set of tools that are similar to data handling on larger Computers.
+
+# Quickdump
+
+
+Writiing to tape with 1-Byte-ID:<br>
+Startadress    SAL/SAH to 17F5/F6<br>
+Endadresse+1    EAL/EAH to 17F7/F8<br>
+Identity       ID    to 17F9<br>
+Start           STARTADRESSE is $0600<br>
+
+Writing to tape with a 6-Byte-Name: <br>
+Startadress and Endadresse like before<br>
+Identity      Header to 1780-1785 or change LOSWI to another area<br>
+Start          STARTADRESSE is $0605<br>
+
+Writing to tape with additional parameters: <br>
+Startadress, Endadress und header like before.<br>
+LDA of the length of the table stored in 1780. <br>
+LDX #$ 00<br>
+JSR ENTRY1<br>
+
+
+
+
+
 Um das Herzstück der utilities SUPERDUMP und SUPERLOAD baute der 
 Herausgeber einen Rahmen, der sicher fortschrittlich ist:
 VERSALOAD ist nicht nur ein reines Ladeprogramm, sondern zugleich auch 
@@ -32,7 +67,7 @@ auf Möglichkeiten des Overlay hingewiesen: Bei begrenztem Speicher
 können lange Programme in Segmente zerlegt werden, die bei Bedarf
 in einen Puffer (Overlaybereich) nachgezogen werden.
 
-# Quickload
+# Quickdump
 
 Weitere Hinweise zu QUICKDUMP
 

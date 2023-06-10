@@ -1,8 +1,9 @@
 # Quickdump_Versaload-for-KIM-1
 
 The lovely couple of Quickdump and Versaload
-
 A double speed loader for the KIM-1 with relocating and linking.
+
+![a tape](https://netzherpes.de/content/images/20230601160848-2876917.jpg)
 
 by John Oliver and Roland Löhr August 1978
 
